@@ -4,7 +4,7 @@ const bookingSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "customers"
     },
-    itemId: {
+    packageId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "items"
     },
@@ -12,12 +12,16 @@ const bookingSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    quantity: {
-        type: String,
+    number_of_travelers: {
+        type: Number,
         required: true
     },
     status: {
         type: String,
+        required: true
+    },
+    total_price: {
+        type: Number,
         required: true
     }
 
