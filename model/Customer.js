@@ -8,10 +8,20 @@ const customerSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    password: {
+        type: String,
+        required: true
+
+    },
     contact_no: {
+        type: Number,
+        required: true
+    },
+    address: {
         type: String,
         required: true
     }
+
 
 })
 const Customer = mongoose.model("customers", customerSchema);
