@@ -1,10 +1,8 @@
 const asyncHandler = require("../middleware/async");
-const Student = require("../models/student");
-const Batch = require("../models/batch");
-const Course = require("../models/course");
+const Customer = require("../models/customer");
 const path = require("path");
 const fs = require("fs");
-const student = require("../models/student");
+const customer = require("../models/customer");
 
 // @desc    Get all customers
 // @route   GET /api/v1/customers

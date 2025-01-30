@@ -1,5 +1,10 @@
 const { required } = require("joi");
 const mongoose = require("mongoose")
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+
+
 const customerSchema = new mongoose.Schema({
     fname: {
         type: String,
@@ -29,7 +34,7 @@ const customerSchema = new mongoose.Schema({
     },
     image: {
         type: String,
-        required: true,
+        default: null,
     },
 
 
@@ -52,7 +57,7 @@ customerSchema.methods.getSignedJwtToken = function () {
 };
 
 // Match user entered password to hashed password in database
-customerchema.methods.matchPassword = async function (enteredPassword) {
+customerSchema.methods.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
