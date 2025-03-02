@@ -1,28 +1,55 @@
-const Booking = require('../model/Booking')
-const findAll = async (req, res) => {
-    try {
-        const bookings = await Booking.find().populate(["customerId", "packageId",]);
-        res.status(200).json(bookings);
-    } catch (e) {
-        res.json(e)
-    }
+const Booking = require("../models/Booking");
 
+// Create a new booking
+const createBooking = async (req, res) => {
+  try {
+    const newBooking = new Booking(req.body);
+    const savedBooking = await newBooking.save();
+    res.status(201).json({ message: "Booking successful!", booking: savedBooking });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to create booking" });
+  }
+};
 
+// Get all bookings
+const getAllBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find().populate("packageId");
+    res.status(200).json(bookings);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch bookings" });
+  }
+};
 
-}
-const save = async (req, res) => {
-    try {
-        const bookings = new Booking(req.body);
-        await bookings.save();
-        res.status(201).json(bookings)
-    } catch (e) {
-        res.json(e)
-    }
+// Get a single booking by ID
+const getBookingById = async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id).populate("packageId");
+    if (!booking) return res.status(404).json({ error: "Booking not found" });
+    res.status(200).json(booking);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch booking" });
+  }
+};
 
-}
-
+// Cancel a booking
+const cancelBooking = async (req, res) => {
+  try {
+    const updatedBooking = await Booking.findByIdAndUpdate(
+      req.params.id,
+      { status: "cancelled" },
+      { new: true }
+    );
+    if (!updatedBooking) return res.status(404).json({ error: "Booking not found" });
+    res.status(200).json({ message: "Booking cancelled", booking: updatedBooking });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to cancel booking" });
+  }
+};
 
 module.exports = {
-    findAll,
-    save
-}
+  createBooking,
+  getAllBookings,
+  getBookingById,
+  cancelBooking,
+};

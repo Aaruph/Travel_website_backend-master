@@ -1,54 +1,49 @@
-//PROTECT THE MIDDLEWARE
 const jwt = require("jsonwebtoken");
 const asyncHandler = require("./async");
-const User = require("../models/customer");
+const Customer = require("../models/Customer");
 
-//Protect routes
+// Protect routes (Authentication Middleware)
 exports.protect = asyncHandler(async (req, res, next) => {
-  let token;
+    let token;
 
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
-    // Set token from Bearer token in header
-    token = req.headers.authorization.split(" ")[1];
-  }
+    if (
+        req.headers.authorization &&
+        req.headers.authorization.startsWith("Bearer")
+    ) {
+        // Extract token from Bearer header
+        token = req.headers.authorization.split(" ")[1];
+    }
 
-  //Make sure token exist
-  if (!token) {
-    // return next(new ErrorResponse('Not authorized to access this route', 401));
-    return res
-      .status(401)
-      .json({ message: "Not authorized to access this route" });
-  }
+    // Ensure token exists
+    if (!token) {
+        return res.status(401).json({ message: "Not authorized, no token" });
+    }
 
-  try {
-    //Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // console.log(decoded);
-    req.user = await User.findById(decoded.id);
-    next();
-  } catch (err) {
-    // return next(new ErrorResponse('Not authorized to access this route', 401));
-    return res
-      .status(401)
-      .json({ message: "Not authorized to access this route" });
-  }
+    try {
+        // Verify token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Fetch user from DB (without password)
+        req.user = await Customer.findById(decoded.id).select("-password");
+
+        if (!req.user) {
+            return res.status(401).json({ message: "User not found" });
+        }
+
+        next();
+    } catch (err) {
+        return res.status(401).json({ message: "Invalid token" });
+    }
 });
 
-// Grant access to specific roles , i.e publisher and admin
-
+// Role-Based Authorization Middleware
 exports.authorize = (...roles) => {
-  return (req, res, next) => {
-    ///check if it is admin or publisher. user cannot access
-    //  console.log(req.user.role);
-    if (!roles.includes(req.user.role)) {
-      // return next(new ErrorResponse(User role ${req.user.roles} is not authorized to access this route, 403));
-      return res.status(403).json({
-        message: `User role ${req.user.roles} is not authorized to access this route`,
-      });
-    }
-    next();
-  };
+    return (req, res, next) => {
+        if (!req.user || !roles.includes(req.user.role)) {
+            return res.status(403).json({
+                message: `User role '${req.user.role}' is not authorized to access this route`,
+            });
+        }
+        next();
+    };
 };

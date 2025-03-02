@@ -1,45 +1,18 @@
-const mongoose = require("mongoose")
-const packageSchema = new mongoose.Schema({
-    package_name: {
-        type: String,
-        required: true
-    },
-    description: {
-        type: String,
-        required: true
-    },
-    price: {
-        type: Number,
-        required: true
+const mongoose = require("mongoose");
 
-    },
-    duration: {
-        type: Number,
-        required: true
-    },
-    destination: {
-        type: String,
-        required: true
-    },
-    departure_date: {
-        type: Date,
-        required: true
-    },
-    return_date: {
-        type: Date,
-        required: true
-    },
-    availavility: {
-        type: Number,
-        required: true
-    },
-    created_at: {
-        type: Date,
-        default: Date.now
-    }
+const packageSchema = new mongoose.Schema(
+  {
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+    location: { type: String, required: true },
+    price: { type: Number, required: true },
+    duration: { type: String, required: true },
+    image: { type: String, required: true },
+    availableDates: [{ type: Date, required: true }],
+    category: { type: String, required: true, enum: ["Adventure", "Luxury", "Budget"] },
+    itinerary: [{ type: String, required: true }], // Array of strings for itinerary
+  },
+  { timestamps: true }
+);
 
-
-})
-const Package = mongoose.model("packages", packageSchema);
-
-module.exports = Package
+module.exports = mongoose.model("Package", packageSchema);

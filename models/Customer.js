@@ -1,9 +1,7 @@
-const { required } = require("joi");
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-
 
 const customerSchema = new mongoose.Schema({
     fname: {
@@ -14,11 +12,10 @@ const customerSchema = new mongoose.Schema({
     lname: {
         type: String,
         required: true,
-        trim: true,
-
+        trim: true
     },
     phone: {
-        type: String,
+        type: Number,
         required: true,
         trim: true,
     },
@@ -31,11 +28,18 @@ const customerSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
+
     },
     image: {
         type: String,
         default: null,
+        trim: true,
     },
+    role: {
+        type: String,
+        enum: ["customer", "admin"], // Define roles
+        default: "customer", // Default role for new users
+    }
 
 
 });
@@ -77,4 +81,5 @@ customerSchema.methods.getResetPasswordToken = function () {
 
     return resetToken;
 };
+
 module.exports = mongoose.model("Customer", customerSchema);

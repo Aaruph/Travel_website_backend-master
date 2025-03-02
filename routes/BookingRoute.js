@@ -1,15 +1,11 @@
+
 const express = require("express")
+
+const { cancelBooking, createBooking, getAllBookings, getBookingById  } = require("../controllers/BookingController");
 const router = express.Router();
-const { findAll, save, findById, deleteById, update } = require("../controller/BookingController");
-const BookingValidation = require("../validation/BookingValidation");
 
-
-router.get("/", findAll);
-router.post("/", BookingValidation, save);
-router.get("/:id", findById);
-router.delete("/:id", deleteById);
-router.put("/:id", update)
-
-
-
+router.post("/", createBooking); // Create booking
+router.get("/", getAllBookings); // Get all bookings
+router.get("/:id", getBookingById); // Get a specific booking by ID
+router.put("/:id/cancel", cancelBooking); // Cancel a booking
 module.exports = router;
